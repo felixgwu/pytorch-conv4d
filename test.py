@@ -21,6 +21,7 @@ start = time.perf_counter()
 
 print(weight.size(), x_unfold.size())
 o = torch.einsum('oicdef,bicdefwhuv->bowhuv', (weight, x_unfold))
+# o = (weight.view(1, C_out, C_in, k ,k, k, k, 1, 1, 1, 1) * x_unfold.unsqueeze(1)).view(B, C_out, C_in * k**4, W, H, U, V).sum(2)
 print(o.size())
 
 end = time.perf_counter()
@@ -37,7 +38,8 @@ print('conv time:', end - start)
 # start = time.perf_counter()
 
 # print(weight.size(), x_unfold.size())
-# o = torch.einsum('oicdef,biwhuvcdef->bowhuv', (weight, x_unfold))
+# # o = torch.einsum('oicdef,biwhuvcdef->bowhuv', (weight, x_unfold))
+# o = (weight.view(1, C_out, C_in, 1, 1, 1, 1, k ,k, k, k) * x_unfold.unsqueeze(1)).view(B, C_out, C_in, W, H, U, V, k**4).sum(-1).sum(2)
 # print(o.size())
 
 # end = time.perf_counter()
